@@ -7,6 +7,8 @@
 
 (temp_c 100)
 
+;;Equipo: GAmaliel Marines A01708746 - Ricardo Rosales A01704994 
+
 ;;ejercicio 1, tarea
 ;; fahrenheit-to-celsius: number -> number
 (define fahrenheit-to-celsius
