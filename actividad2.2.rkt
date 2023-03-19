@@ -119,17 +119,17 @@
 ;10.- encode (codifica una lista)
 ; (encode '(a a a a b c c a a d e e e e)) -> '((4 a) (1 b) (2 c) (2 a) (1 d) (4 e))
 (define (encode lst)
-  (define (helper lst res)
+  (define (e-helper lst res)
     (cond
       ((null? lst) res)
-      ((= (length lst) 1) (helper '() (append res (list (car lst)))))
+      ((= (length lst) 1) (e-helper '() (append res (list (car lst)))))
       (else (let loop ((acc 1) (curr (car lst)) (rest (cdr lst)))
               (cond
-                ((null? rest) (helper '() (append res (list (list acc curr)))))
+                ((null? rest) (e-helper '() (append res (list (list acc curr)))))
                 ((eq? curr (car rest)) (loop (+ acc 1) curr (cdr rest)))
-                (else (helper rest (append res (list (list acc curr))))))))))
+                (else (e-helper rest (append res (list (list acc curr))))))))))
 
-  (helper lst '()))
+  (e-helper lst '()))
 (encode '(a a a a b c c a a d e e e e))
 
 ;11.- encode-mod (solo codifica los elementos que se repiten)
@@ -155,23 +155,23 @@
 ;13.- args-swap (intercambia los argumentos de una lista)
 ; (args-swap list 1 2) -> '(2 1)
 (define (args-swap f)
-  (lambda (x y)
-    (f y x)))
+  (lambda (a b)
+    (f b a)))
 ((args-swap list) 1 2)
 
 ;14.- there-exists-one? (existe un elemento que cumpla con la condicion)
 ; (there-exists-one? positive? '(-1 -10 4 -5 -2 -1)) -> #t
-(define (there-exists-one? pred lst)
-  (= (length (filter pred lst)) 1))
+(define (there-exists-one? condi lst)
+  (= (length (filter condi lst)) 1))
 (there-exists-one? positive? '(-1 -10 4 -5 -2 -1))
 
 
 ;15.- linear-search (busqueda lineal)
 ; (linear-search '(48 77 30 31 5 20 91 92 69 97 28 32 17 18 96) 5 =) -> 4
-(define (linear-search lst x eq-fun)
+(define (linear-search lst x eq)
   (let loop ((lst lst) (i 0))
     (cond ((null? lst) #f)
-          ((eq-fun (car lst) x) i)
+          ((eq (car lst) x) i)
           (else (loop (cdr lst) (+ i 1))))))
 (linear-search '(48 77 30 31 5 20 91 92 69 97 28 32 17 18 96) 5 =)
 
@@ -193,23 +193,21 @@
   (define df (deriv f 0.001))
   (define ddf (deriv df 0.001))
   (define dddf (deriv ddf 0.001))
-  (define (newton-helper guess)
+  (define (n-helper guess)
     (let ((x (- guess (/ (f guess) (df guess)))))
       (if (< (abs (- x guess)) 0.001)
           x
-          (newton-helper x))))
-  (newton-helper guess));
+          (n-helper x))))
+  (n-helper guess));
 (newton (lambda (x) (- x 10)) 1)
 
 ;18 integral (integral de una funcion usando simpson)
 ; (integral 0 1 10 (lambda (x) (* x x x))) -> 0.25
 (define (integral a b n f)
     (define h (/ (- b a) n))
-    (define (simpson-helper i acc)
+    (define (s-helper i acc)
       (if (= i n)
           acc
-            (simpson-helper (+ i 1) (+ acc (* (f (+ a (* i h))) (if (= (modulo i 2) 0) 2 4))))))
-    (* (/ h 3) (+ (f a) (f b) (simpson-helper 1 0))))
+            (s-helper (+ i 1) (+ acc (* (f (+ a (* i h))) (if (= (modulo i 2) 0) 2 4))))))
+    (* (/ h 3) (+ (f a) (f b) (s-helper 1 0))))
 (integral 0 1 10 (lambda (x) (* x x x)))
-
-
